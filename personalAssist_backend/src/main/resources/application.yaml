@@ -1,0 +1,35 @@
+spring:
+  application:
+    name: personalAssist
+
+  datasource:
+    url: jdbc:postgresql://localhost:5436/personal_assist
+    username: postgres
+    password: password123
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+
+  mail:
+    host: localhost
+    port: 1025
+    properties:
+      mail:
+        smtp:
+          auth: false
+          starttls:
+            enable: false
+
+# Custom application security settings
+app:
+  jwt:
+    secret: 9a2f68285514f7b2cf6cb42e478546b3f9bb8c5a452ef29b8c08afb95764d262
+    expiration-ms: 86400000 # 24 Hours
+  frontend:
+    url: http://localhost:5173
