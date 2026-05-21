@@ -1,0 +1,14 @@
+{
+  "configurations": [
+    {
+      "type": "java",
+      "name": "Spring Boot-PersonalAssistApplication<personalAssist>",
+      "request": "launch",
+      "cwd": "${workspaceFolder}",
+      "mainClass": "com.nullbase.personalAssist.PersonalAssistApplication",
+      "projectName": "personalAssist",
+      "args": "",
+      "envFile": "${workspaceFolder}/.env"
+    }
+  ]
+}
