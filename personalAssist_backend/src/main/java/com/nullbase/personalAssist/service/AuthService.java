@@ -3,6 +3,7 @@ package com.nullbase.personalAssist.service;
 import com.nullbase.personalAssist.dto.*;
 import com.nullbase.personalAssist.entity.PasswordResetToken;
 import com.nullbase.personalAssist.entity.User;
+import com.nullbase.personalAssist.modules.common.DataSeeder;
 import com.nullbase.personalAssist.repository.PasswordResetTokenRepository;
 import com.nullbase.personalAssist.repository.UserRepository;
 import com.nullbase.personalAssist.security.JwtUtils;
@@ -35,6 +36,9 @@ public class AuthService {
     @Autowired
     private JavaMailSender mailSender;
 
+    @Autowired
+    private DataSeeder dataSeeder;
+
     @Value("${app.frontend.url}")
     private String frontendUrl;
 
@@ -51,6 +55,13 @@ public class AuthService {
         );
 
         userRepository.save(user);
+        try {
+            dataSeeder.seedSkillsForUser(user);
+        } catch (Exception e) {
+            // Log warning but don't fail registration if seeding fails
+            System.err.println("Failed to seed initial skills for user: " + e.getMessage());
+        }
+        
         String token = jwtUtils.generateToken(user.getEmail());
         return new AuthResponse(token, user.getEmail(), user.getFirstName(), user.getLastName());
     }
