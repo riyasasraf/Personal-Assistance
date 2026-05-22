@@ -1,13 +1,14 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useSkills } from '../context/SkillsContext';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { 
     Sparkles, Plus, Search, Filter, BookOpen, 
     Award, CheckCircle2, ChevronRight, LayoutDashboard, 
-    User, LogOut, Trash2, Edit3, FolderGit2
+    User, LogOut, Trash2, Edit3, FolderGit2, Upload
 } from 'lucide-react';
 import AddSkillModal from '../components/AddSkillModal';
+import { importRoadmapDirectly } from '../services/api';
 
 export default function SkillsPage() {
     const { skills, loading, error, fetchSkills, addSkill, removeSkill } = useSkills();
@@ -19,10 +20,42 @@ export default function SkillsPage() {
     const [statusFilter, setStatusFilter] = useState('');
     const [levelFilter, setLevelFilter] = useState('');
     const [isAddOpen, setIsAddOpen] = useState(false);
+    const [importLoading, setImportLoading] = useState(false);
+    
+    const fileInputRef = useRef(null);
 
     useEffect(() => {
         fetchSkills(search, statusFilter, levelFilter);
     }, [search, statusFilter, levelFilter]);
+
+    const handleImportClick = () => {
+        if (fileInputRef.current) {
+            fileInputRef.current.click();
+        }
+    };
+
+    const handleFileChange = async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        setImportLoading(true);
+        try {
+            const text = await file.text();
+            // Validate it's JSON
+            JSON.parse(text);
+            
+            await importRoadmapDirectly(text);
+            alert('Skill imported successfully!');
+            fetchSkills(search, statusFilter, levelFilter);
+        } catch (err) {
+            alert('Failed to import skill: ' + (err.message || err));
+        } finally {
+            setImportLoading(false);
+            if (fileInputRef.current) {
+                fileInputRef.current.value = '';
+            }
+        }
+    };
 
     const handleLogout = () => {
         logoutUser();
@@ -105,6 +138,20 @@ export default function SkillsPage() {
                             <FolderGit2 className="h-5 w-5 mr-2 text-cyan-400 md:hidden" /> Skills Dashboard
                         </h1>
                         <div className="flex items-center space-x-3">
+                            <input 
+                                type="file" 
+                                accept=".json" 
+                                ref={fileInputRef} 
+                                onChange={handleFileChange} 
+                                style={{ display: 'none' }} 
+                            />
+                            <button
+                                onClick={handleImportClick}
+                                disabled={importLoading}
+                                className="inline-flex items-center justify-center px-4 py-2 bg-white/5 hover:bg-white/10 text-zinc-300 hover:text-white border border-white/10 rounded-xl text-sm font-semibold transition-all cursor-pointer disabled:opacity-50"
+                            >
+                                <Upload className="h-4 w-4 mr-1.5" /> {importLoading ? 'Importing...' : 'Import Skill'}
+                            </button>
                             <button
                                 onClick={() => setIsAddOpen(true)}
                                 className="inline-flex items-center justify-center px-4 py-2 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white rounded-xl text-sm font-semibold shadow-lg shadow-cyan-500/20 hover:shadow-cyan-500/30 transition-all cursor-pointer"

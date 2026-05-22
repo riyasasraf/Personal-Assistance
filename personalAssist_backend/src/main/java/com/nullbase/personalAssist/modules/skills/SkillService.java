@@ -3,8 +3,12 @@ package com.nullbase.personalAssist.modules.skills;
 import com.nullbase.personalAssist.entity.User;
 import com.nullbase.personalAssist.modules.skills.dto.CreateSkillRequest;
 import com.nullbase.personalAssist.modules.skills.dto.SkillDto;
+import com.nullbase.personalAssist.modules.topics.Topic;
 import com.nullbase.personalAssist.modules.topics.TopicRepository;
+import com.nullbase.personalAssist.modules.subtopics.Subtopic;
 import com.nullbase.personalAssist.modules.subtopics.SubtopicRepository;
+import com.nullbase.personalAssist.modules.tasks.Task;
+import com.nullbase.personalAssist.modules.tasks.TaskRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,6 +28,9 @@ public class SkillService {
 
     @Autowired
     private SubtopicRepository subtopicRepository;
+
+    @Autowired
+    private TaskRepository taskRepository;
 
     @Transactional(readOnly = true)
     public List<SkillDto> getAllSkills(User user, String search, SkillStatus status, SkillLevel level) {
@@ -75,6 +82,18 @@ public class SkillService {
     @Transactional
     public void deleteSkill(UUID id, User user) {
         Skill skill = getSkillEntity(id, user);
+        
+        List<Topic> topics = topicRepository.findBySkillOrderByOrderIndexAsc(skill);
+        for (Topic topic : topics) {
+            List<Subtopic> subtopics = subtopicRepository.findByTopicOrderByOrderIndexAsc(topic);
+            for (Subtopic sub : subtopics) {
+                List<Task> tasks = taskRepository.findBySubtopic(sub);
+                taskRepository.deleteAll(tasks);
+            }
+            subtopicRepository.deleteAll(subtopics);
+        }
+        topicRepository.deleteAll(topics);
+        
         skillRepository.delete(skill);
     }
 

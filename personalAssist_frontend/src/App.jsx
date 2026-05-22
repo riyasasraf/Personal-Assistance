@@ -11,6 +11,10 @@ import SkillsPage from './pages/SkillsPage';
 import SkillDetailPage from './pages/SkillDetailPage';
 import TasksPage from './pages/TasksPage';
 import SchedulerSettingsPage from './pages/SchedulerSettingsPage';
+import DraftsPage from './pages/DraftsPage';
+import TemplatesPage from './pages/TemplatesPage';
+import ImportPage from './pages/ImportPage';
+import AnalyticsPage from './pages/AnalyticsPage';
 
 const ProtectedRoute = ({ children }) => {
     const { token, loading } = useAuth();
@@ -124,6 +128,38 @@ function App() {
                                 element={
                                     <ProtectedRoute>
                                         <SchedulerSettingsPage />
+                                    </ProtectedRoute>
+                                } 
+                            />
+                            <Route 
+                                path="/drafts" 
+                                element={
+                                    <ProtectedRoute>
+                                        <DraftsPage />
+                                    </ProtectedRoute>
+                                } 
+                            />
+                            <Route 
+                                path="/templates" 
+                                element={
+                                    <ProtectedRoute>
+                                        <TemplatesPage />
+                                    </ProtectedRoute>
+                                } 
+                            />
+                            <Route 
+                                path="/import" 
+                                element={
+                                    <ProtectedRoute>
+                                        <ImportPage />
+                                    </ProtectedRoute>
+                                } 
+                            />
+                            <Route 
+                                path="/analytics" 
+                                element={
+                                    <ProtectedRoute>
+                                        <AnalyticsPage />
                                     </ProtectedRoute>
                                 } 
                             />

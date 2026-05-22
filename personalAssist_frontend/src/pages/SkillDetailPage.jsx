@@ -5,10 +5,11 @@ import { useAuth } from '../context/AuthContext';
 import { 
     Sparkles, ArrowLeft, LayoutDashboard, User, LogOut, 
     BookOpen, Award, CheckCircle2, AlertCircle, Plus, 
-    Edit, Save, X, Calendar, FolderGit2
+    Edit, Save, X, Calendar, FolderGit2, Download
 } from 'lucide-react';
 import RoadmapTree from '../features/skills/RoadmapTree';
 import SubtopicDrawer from '../features/skills/SubtopicDrawer';
+import ExportModal from '../components/ExportModal';
 
 export default function SkillDetailPage() {
     const { id } = useParams();
@@ -40,6 +41,7 @@ export default function SkillDetailPage() {
     const [editGoal, setEditGoal] = useState('');
     const [editLevel, setEditLevel] = useState('');
     const [editStatus, setEditStatus] = useState('');
+    const [isExportOpen, setIsExportOpen] = useState(false);
 
     useEffect(() => {
         if (id) {
@@ -225,6 +227,12 @@ export default function SkillDetailPage() {
                         </button>
 
                         <div className="flex items-center space-x-2">
+                            <button
+                                onClick={() => setIsExportOpen(true)}
+                                className="inline-flex items-center justify-center px-3 py-1.5 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white rounded-lg text-xs font-semibold transition-colors cursor-pointer shadow-md shadow-cyan-500/20"
+                            >
+                                <Download className="h-3.5 w-3.5 mr-1" /> Export Roadmap
+                            </button>
                             <button
                                 onClick={() => setIsEditingSkill(!isEditingSkill)}
                                 className="inline-flex items-center justify-center px-3 py-1.5 bg-white/5 border border-white/10 hover:bg-white/10 text-zinc-300 hover:text-white rounded-lg text-xs font-semibold transition-colors cursor-pointer"
@@ -517,6 +525,14 @@ export default function SkillDetailPage() {
                     onClose={() => setActiveSubtopic(null)}
                 />
             )}
+
+            {/* Export Roadmap Modal */}
+            <ExportModal 
+                isOpen={isExportOpen}
+                onClose={() => setIsExportOpen(false)}
+                skillId={currentSkill.id}
+                skillName={currentSkill.name}
+            />
         </div>
     );
 }

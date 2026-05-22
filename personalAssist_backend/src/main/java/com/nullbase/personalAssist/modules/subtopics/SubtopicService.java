@@ -7,6 +7,8 @@ import com.nullbase.personalAssist.modules.topics.Topic;
 import com.nullbase.personalAssist.modules.topics.TopicService;
 import com.nullbase.personalAssist.modules.subtopics.dto.CreateSubtopicRequest;
 import com.nullbase.personalAssist.modules.subtopics.dto.SubtopicDto;
+import com.nullbase.personalAssist.modules.tasks.Task;
+import com.nullbase.personalAssist.modules.tasks.TaskRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,6 +22,9 @@ public class SubtopicService {
 
     @Autowired
     private SubtopicRepository subtopicRepository;
+
+    @Autowired
+    private TaskRepository taskRepository;
 
     @Autowired
     private TopicService topicService;
@@ -102,6 +107,10 @@ public class SubtopicService {
     public void deleteSubtopic(UUID id, User user) {
         Subtopic subtopic = getSubtopicEntity(id, user);
         Skill skill = subtopic.getTopic().getSkill();
+        
+        List<Task> tasks = taskRepository.findBySubtopic(subtopic);
+        taskRepository.deleteAll(tasks);
+        
         subtopicRepository.delete(subtopic);
         skillService.recalculateSkillProgress(skill);
     }

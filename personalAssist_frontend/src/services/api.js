@@ -234,3 +234,94 @@ export const saveSchedulerPreference = (pref) => {
     });
 };
 
+// Drafts API
+export const getDrafts = () => {
+    return apiRequest('/drafts', { method: 'GET' });
+};
+
+export const getDraft = (id) => {
+    return apiRequest(`/drafts/${id}`, { method: 'GET' });
+};
+
+export const createDraft = (draft) => {
+    return apiRequest('/drafts', {
+        method: 'POST',
+        body: JSON.stringify(draft),
+    });
+};
+
+export const updateDraft = (id, draft) => {
+    return apiRequest(`/drafts/${id}`, {
+        method: 'PUT',
+        body: JSON.stringify(draft),
+    });
+};
+
+export const deleteDraft = (id) => {
+    return apiRequest(`/drafts/${id}`, { method: 'DELETE' });
+};
+
+export const updateDraftStatus = (id, status) => {
+    return apiRequest(`/drafts/${id}/status?status=${status}`, { method: 'PATCH' });
+};
+
+export const publishDraft = (id) => {
+    return apiRequest(`/drafts/${id}/publish`, { method: 'POST' });
+};
+
+// Templates API
+export const getTemplates = () => {
+    return apiRequest('/templates', { method: 'GET' });
+};
+
+export const getTemplate = (id) => {
+    return apiRequest(`/templates/${id}`, { method: 'GET' });
+};
+
+export const importTemplateAsDraft = (id) => {
+    return apiRequest(`/templates/${id}/import`, { method: 'POST' });
+};
+
+// Import/Export API
+export const validateRoadmapPreview = (jsonStr) => {
+    return apiRequest('/import-export/validate-preview', {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain' },
+        body: jsonStr,
+    });
+};
+
+export const importRoadmapAsDraft = (jsonStr) => {
+    return apiRequest('/import-export/import', {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain' },
+        body: jsonStr,
+    });
+};
+
+export const importRoadmapDirectly = (jsonStr) => {
+    return apiRequest('/import-export/import-direct', {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain' },
+        body: jsonStr,
+    });
+};
+
+export const exportRoadmap = (skillId) => {
+    return apiRequest(`/import-export/export/${skillId}`, { method: 'GET' });
+};
+
+// Analytics API
+export const getAnalyticsDashboard = () => {
+    return apiRequest('/analytics/dashboard', { method: 'GET' });
+};
+
+export const startLearningSession = (taskId) => {
+    return apiRequest(`/analytics/sessions/start?taskId=${taskId}`, { method: 'POST' });
+};
+
+export const endLearningSession = (sessionId, completed) => {
+    return apiRequest(`/analytics/sessions/${sessionId}/end?completed=${completed}`, { method: 'POST' });
+};
+
+
