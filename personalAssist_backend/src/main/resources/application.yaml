@@ -3,9 +3,9 @@ spring:
     name: personalAssist
 
   datasource:
-    url: jdbc:postgresql://localhost:5436/personal_assist
-    username: postgres
-    password: password123
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
     driver-class-name: org.postgresql.Driver
 
   jpa:
@@ -17,8 +17,8 @@ spring:
         dialect: org.hibernate.dialect.PostgreSQLDialect
 
   mail:
-    host: localhost
-    port: 1025
+    host: ${MAIL_HOST}
+    port: ${MAIL_PORT}
     properties:
       mail:
         smtp:
@@ -29,7 +29,7 @@ spring:
 # Custom application security settings
 app:
   jwt:
-    secret: 9a2f68285514f7b2cf6cb42e478546b3f9bb8c5a452ef29b8c08afb95764d262
-    expiration-ms: 86400000 # 24 Hours
+    secret: ${JWT_SECRET}
+    expiration-ms: ${JWT_EXPIRY} # 24 Hours
   frontend:
-    url: http://localhost:5173
+    url: ${FRONTEND_URL}

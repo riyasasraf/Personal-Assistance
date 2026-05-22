@@ -1,6 +1,7 @@
 package com.nullbase.personalAssist.security;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -23,6 +24,8 @@ public class SecurityConfig {
 
     @Autowired
     private JwtAuthFilter jwtAuthFilter;
+    @Value("${app.frontend.url}")
+    private String frontendUrl;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -32,13 +35,14 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-            .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-            .csrf(csrf -> csrf.disable())
-            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-            .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/api/auth/signup", "/api/auth/login", "/api/auth/forgot-password", "/api/auth/reset-password").permitAll()
-                .anyRequest().authenticated()
-            );
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+                .csrf(csrf -> csrf.disable())
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/api/auth/signup", "/api/auth/login", "/api/auth/forgot-password",
+                                "/api/auth/reset-password")
+                        .permitAll()
+                        .anyRequest().authenticated());
 
         http.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
@@ -48,7 +52,7 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Collections.singletonList("http://localhost:5173"));
+        configuration.setAllowedOrigins(Collections.singletonList(frontendUrl));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "Cache-Control"));
         configuration.setAllowCredentials(true);
