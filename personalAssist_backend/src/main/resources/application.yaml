@@ -33,3 +33,6 @@ app:
     expiration-ms: ${JWT_EXPIRY} # 24 Hours
   frontend:
     url: ${FRONTEND_URL}
+
+server:
+  port: ${SERVER_PORT:9051}
