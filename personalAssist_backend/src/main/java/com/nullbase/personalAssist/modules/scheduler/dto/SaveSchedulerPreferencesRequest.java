@@ -1,8 +1,10 @@
 package com.nullbase.personalAssist.modules.scheduler.dto;
 
 import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
 import java.util.UUID;
+import java.util.List;
+import java.util.ArrayList;
 
 public class SaveSchedulerPreferencesRequest {
 
@@ -11,13 +13,14 @@ public class SaveSchedulerPreferencesRequest {
     @Min(value = 1, message = "Tasks per day must be at least 1")
     private int tasksPerDay = 5;
 
-    @NotBlank(message = "Preferred days is required")
-    private String preferredDays = "ALL"; // ALL, WEEKDAYS, WEEKENDS
+    @NotEmpty(message = "Preferred days is required")
+    private List<String> preferredDays = new ArrayList<>(List.of("ALL")); // ALL, WEEKDAYS, WEEKENDS or individual days
 
     @Min(value = 1, message = "Study minutes per day must be at least 1")
     private int studyMinutesPerDay = 120;
 
-    public SaveSchedulerPreferencesRequest() {}
+    public SaveSchedulerPreferencesRequest() {
+    }
 
     public UUID getSkillId() {
         return skillId;
@@ -35,11 +38,11 @@ public class SaveSchedulerPreferencesRequest {
         this.tasksPerDay = tasksPerDay;
     }
 
-    public String getPreferredDays() {
+    public List<String> getPreferredDays() {
         return preferredDays;
     }
 
-    public void setPreferredDays(String preferredDays) {
+    public void setPreferredDays(List<String> preferredDays) {
         this.preferredDays = preferredDays;
     }
 

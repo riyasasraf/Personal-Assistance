@@ -1,0 +1,77 @@
+version: "3.8"
+
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: personal_assist_db
+    restart: always
+
+    environment:
+      POSTGRES_DB: personal_assist
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password123
+
+    ports:
+      - "5436:5432"
+
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+    networks:
+      - personal_assist_network
+
+  mailpit:
+    image: axllent/mailpit:latest
+    container_name: personal_assist_mailpit
+    restart: always
+
+    ports:
+      - "8025:8025"
+      - "1025:1025"
+
+    networks:
+      - personal_assist_network
+
+  backend:
+    build:
+      context: ./personalAssist_backend
+
+    container_name: personal_assist_backend
+
+    restart: always
+
+    ports:
+      - "8080:8080"
+
+    env_file:
+      - ./personalAssist_backend/.env
+
+    depends_on:
+      - db
+      - mailpit
+
+    networks:
+      - personal_assist_network
+
+  frontend:
+    build:
+      context: ./personalAssist_frontend
+
+    container_name: personal_assist_frontend
+
+    restart: always
+
+    ports:
+      - "5173:80"
+
+    depends_on:
+      - backend
+
+    networks:
+      - personal_assist_network
+
+volumes:
+  pgdata:
+
+networks:
+  personal_assist_network:

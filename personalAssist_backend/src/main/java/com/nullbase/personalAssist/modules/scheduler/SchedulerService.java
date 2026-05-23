@@ -62,8 +62,7 @@ public class SchedulerService {
                     skill,
                     request.getTasksPerDay(),
                     request.getPreferredDays(),
-                    request.getStudyMinutesPerDay()
-            );
+                    request.getStudyMinutesPerDay());
         }
 
         SchedulerPreferences saved = preferencesRepository.save(preferences);
@@ -95,7 +94,7 @@ public class SchedulerService {
         SchedulerPreferences globalPref = prefs.stream()
                 .filter(p -> p.getSkill() == null)
                 .findFirst()
-                .orElse(new SchedulerPreferences(user, null, 5, "ALL", 120));
+                .orElse(new SchedulerPreferences(user, null, 5, Arrays.asList("ALL"), 120));
 
         Map<UUID, SchedulerPreferences> skillPrefs = new HashMap<>();
         for (SchedulerPreferences p : prefs) {
@@ -130,13 +129,16 @@ public class SchedulerService {
                 return 1;
             } else if (t1Overdue && t2Overdue) {
                 int dateCompare = d1.compareTo(d2);
-                if (dateCompare != 0) return dateCompare;
+                if (dateCompare != 0)
+                    return dateCompare;
             } else {
                 // If neither is overdue, we want scheduled today to sort before null
                 boolean t1Today = d1 != null && d1.isEqual(today);
                 boolean t2Today = d2 != null && d2.isEqual(today);
-                if (t1Today && !t2Today) return -1;
-                if (!t1Today && t2Today) return 1;
+                if (t1Today && !t2Today)
+                    return -1;
+                if (!t1Today && t2Today)
+                    return 1;
             }
 
             // Created date comparison (oldest first)
@@ -176,12 +178,22 @@ public class SchedulerService {
             SchedulerPreferences skillPref = skillPrefs.getOrDefault(skillId, globalPref);
 
             // Check preferred days constraint
-            String preferredDays = skillPref.getPreferredDays();
-            if ("WEEKDAYS".equalsIgnoreCase(preferredDays) && isWeekend) {
-                continue;
-            }
-            if ("WEEKENDS".equalsIgnoreCase(preferredDays) && !isWeekend) {
-                continue;
+            List<String> preferredDays = skillPref.getPreferredDays();
+            // If preference includes ALL, allow scheduling any day
+            if (preferredDays != null && !preferredDays.isEmpty()) {
+                if (preferredDays.contains("ALL")) {
+                    // allowed
+                } else if (preferredDays.contains("WEEKDAYS") && isWeekend) {
+                    continue;
+                } else if (preferredDays.contains("WEEKENDS") && !isWeekend) {
+                    continue;
+                } else {
+                    // If specific days provided (MONDAY, TUESDAY, ...), ensure today is included
+                    String todayName = today.getDayOfWeek().name();
+                    if (!preferredDays.contains(todayName)) {
+                        continue;
+                    }
+                }
             }
 
             // Check skill-specific tasks per day limit

@@ -1,9 +1,12 @@
 package com.nullbase.personalAssist.modules.tasks;
 
+import com.nullbase.personalAssist.modules.revisions.Revision;
 import com.nullbase.personalAssist.modules.subtopics.Subtopic;
 import jakarta.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -52,6 +55,9 @@ public class Task {
     @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
 
+    @OneToMany(mappedBy = "task", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Revision> revisions = new ArrayList<>();
+
     @PrePersist
     protected void onCreate() {
         createdAt = LocalDateTime.now();
@@ -63,13 +69,16 @@ public class Task {
         updatedAt = LocalDateTime.now();
     }
 
-    public Task() {}
+    public Task() {
+    }
 
-    public Task(Subtopic subtopic, String title, String description, TaskType taskType, TaskStatus status, LocalDate scheduledDate) {
+    public Task(Subtopic subtopic, String title, String description, TaskType taskType, TaskStatus status,
+            LocalDate scheduledDate) {
         this(subtopic, title, description, taskType, status, scheduledDate, PriorityLevel.MEDIUM, 30);
     }
 
-    public Task(Subtopic subtopic, String title, String description, TaskType taskType, TaskStatus status, LocalDate scheduledDate, PriorityLevel priority, int estimatedMinutes) {
+    public Task(Subtopic subtopic, String title, String description, TaskType taskType, TaskStatus status,
+            LocalDate scheduledDate, PriorityLevel priority, int estimatedMinutes) {
         this.subtopic = subtopic;
         this.title = title;
         this.description = description;
@@ -175,5 +184,23 @@ public class Task {
 
     public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    public List<Revision> getRevisions() {
+        return revisions;
+    }
+
+    public void setRevisions(List<Revision> revisions) {
+        this.revisions = revisions;
+    }
+
+    public void addRevision(Revision revision) {
+        revisions.add(revision);
+        revision.setTask(this);
+    }
+
+    public void removeRevision(Revision revision) {
+        revisions.remove(revision);
+        revision.setTask(null);
     }
 }

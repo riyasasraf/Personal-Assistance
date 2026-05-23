@@ -2,14 +2,15 @@ package com.nullbase.personalAssist.entity;
 
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Entity
 @Table(name = "password_reset_tokens")
 public class PasswordResetToken {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID id;
 
     @Column(nullable = false, unique = true)
     private String token;
@@ -22,7 +23,8 @@ public class PasswordResetToken {
     private LocalDateTime expiryDate;
 
     // Constructors
-    public PasswordResetToken() {}
+    public PasswordResetToken() {
+    }
 
     public PasswordResetToken(String token, User user, int expiryInMinutes) {
         this.token = token;
@@ -36,11 +38,11 @@ public class PasswordResetToken {
     }
 
     // Getters and Setters
-    public Long getId() {
+    public UUID getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(UUID id) {
         this.id = id;
     }
 

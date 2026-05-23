@@ -228,6 +228,7 @@ export const getSchedulerPreferences = () => {
 };
 
 export const saveSchedulerPreference = (pref) => {
+  console.log(pref);
   return apiRequest("/scheduler/preferences", {
     method: "POST",
     body: JSON.stringify(pref),

@@ -1,8 +1,12 @@
 package com.nullbase.personalAssist.modules.skills;
 
 import com.nullbase.personalAssist.entity.User;
+import com.nullbase.personalAssist.modules.scheduler.SchedulerPreferences;
+
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -18,6 +22,8 @@ public class Skill {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
+    @OneToMany(mappedBy = "skill", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<SchedulerPreferences> schedulerPreferences = new ArrayList<>();
     @Column(nullable = false)
     private String name;
 
@@ -55,7 +61,8 @@ public class Skill {
         updatedAt = LocalDateTime.now();
     }
 
-    public Skill() {}
+    public Skill() {
+    }
 
     public Skill(User user, String name, String description, SkillLevel level, String goal, SkillStatus status) {
         this.user = user;

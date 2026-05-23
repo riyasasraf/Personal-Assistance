@@ -2,16 +2,19 @@ package com.nullbase.personalAssist.modules.scheduler.dto;
 
 import com.nullbase.personalAssist.modules.scheduler.SchedulerPreferences;
 import java.util.UUID;
+import java.util.List;
+import java.util.ArrayList;
 
 public class SchedulerPreferencesDto {
     private UUID id;
     private UUID skillId;
     private String skillName;
     private int tasksPerDay;
-    private String preferredDays;
+    private List<String> preferredDays = new ArrayList<>();
     private int studyMinutesPerDay;
 
-    public SchedulerPreferencesDto() {}
+    public SchedulerPreferencesDto() {
+    }
 
     public SchedulerPreferencesDto(SchedulerPreferences preferences) {
         this.id = preferences.getId();
@@ -57,11 +60,11 @@ public class SchedulerPreferencesDto {
         this.tasksPerDay = tasksPerDay;
     }
 
-    public String getPreferredDays() {
+    public List<String> getPreferredDays() {
         return preferredDays;
     }
 
-    public void setPreferredDays(String preferredDays) {
+    public void setPreferredDays(List<String> preferredDays) {
         this.preferredDays = preferredDays;
     }
 
